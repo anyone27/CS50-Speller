@@ -30,14 +30,17 @@ long count = 0;
 bool check(const char *word)
 {
     // TODO
-    char *low[LENGTH + 1];
+    int c = strlen(word);
+    char low[c];
     strcpy(low, word);
-    for (int i = 0; i < (LENGTH + 1); i++)
+    for (int i = 0; i < c; i++)
     {
-        int c = tolower(low[i]);
-        low[i] = c;
+        char j = tolower(low[i]);
+        low[i] = j;
     }
-    int pos = hash(word);
+
+    // printf("Low: %s\n", low);
+    int pos = hash(low);
 
     // printf("Hash check: %i\n", pos);
     for (node *tmp = table[pos]; tmp != NULL; tmp = tmp->next)
@@ -90,6 +93,7 @@ bool load(const char *dictionary)
         list = n;
         table[pos] = list;
         count++;
+        // printf("Count: %li\n", count);
 
     }
     fclose(inptr);
@@ -111,17 +115,15 @@ unsigned int size(void)
 bool unload(void)
 {
     // TODO
-    for (int i = 0; i < N; i++)
+    if (list != NULL)
     {
-        while (table[i] != NULL)
+        while (list != NULL)
         {
-            node *tmp = table[i]->next;
-            free(table[i]);
-            table[i] = tmp;
+            node *tmp = list->next;
+            free(list);
+            list = tmp;
         }
         return true;
     }
-    {
         return false;
-    }
 }
