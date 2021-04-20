@@ -21,6 +21,8 @@ const unsigned int N = 26;
 
 // Hash table
 node *table[N];
+node *n;
+node *list = NULL;
 
 long count = 0;
 
@@ -28,10 +30,20 @@ long count = 0;
 bool check(const char *word)
 {
     // TODO
+    char *low[LENGTH + 1];
+    strcpy(low, word);
+    for (int i = 0; i < (LENGTH + 1); i++)
+    {
+        int c = tolower(low[i]);
+        low[i] = c;
+    }
     int pos = hash(word);
+
+    // printf("Hash check: %i\n", pos);
     for (node *tmp = table[pos]; tmp != NULL; tmp = tmp->next)
     {
-        if (tmp->word == word)
+        char *check = tmp->word;
+        if (strcmp(check, low) == 0)
         {
             return true;
         }
@@ -43,38 +55,8 @@ bool check(const char *word)
 unsigned int hash(const char *word)
 {
     // TODO
-    int pos1 = 0;
-    // int pos2 = 0;
-    // int pos3 = 0;
-
-    pos1 = (tolower(word[0]) - 97);
-    return pos1;
-
-    // if (strlen(word) == 1)
-    // {
-    //     pos1 = (tolower(word[0]) - 97);
-    //     printf("Pos1: %i\n", pos1);
-    //     return pos1;
-    // }
-    // else if (strlen(word) == 2)
-    // {
-    //     pos1 = (tolower(word[0]) - 97)*26;
-    //     pos2 = (tolower(word[1]) - 97)*26*26;
-    //     return pos1 + pos2;
-    //     printf("Pos1: %i\n", pos1);
-    //     printf("Pos2: %i\n", pos2);
-    // }
-    // else
-    // {
-    //     pos1 = (tolower(word[0]) - 97)*26;
-    //     pos2 = (tolower(word[1]) - 97)*26*26;
-    //     pos3 = (tolower(word[2]) - 97)*26*26*26;
-    //     return (pos1+pos2+pos3);
-    //     printf("Pos1: %i\n", pos1);
-    //     printf("Pos2: %i\n", pos2);
-    //     printf("Pos3: %i\n", pos3);
-    // }
-
+   int pos = word[0];
+   return pos;
 }
 
 // Loads dictionary into memory, returning true if successful, else false
@@ -88,26 +70,29 @@ bool load(const char *dictionary)
         return false;
     }
 
-    char buffer[LENGTH +1];
+    char buffer[LENGTH + 1];
     while (fscanf(inptr, "%s", buffer) == 1)
     {
 
         //HASH FUNCTION
         int pos = hash(buffer);
-        printf("Hash pos: %i\n", pos);
+        // printf("Hash pos: %i\n", pos);
+        // printf("Word to add: %s\n", buffer);
         //INSERT TO HASH TABLE
-        node *n = malloc(sizeof(node));
+        n = malloc(sizeof(node));
         if (n == NULL)
         {
             return false;
         }
-        n->next = NULL;
         strcpy(n->word, buffer);
-        table[pos]->next = n;
+        n->next = list;
+
+        list = n;
+        table[pos] = list;
         count++;
-        fclose(inptr);
 
     }
+    fclose(inptr);
     return true;
 }
 
