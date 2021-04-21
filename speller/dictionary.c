@@ -17,7 +17,7 @@ typedef struct node
 node;
 
 // Number of buckets in hash table
-const unsigned int N = 26;
+const unsigned int N = 4834435;
 
 // Hash table
 node *table[N];
@@ -58,8 +58,19 @@ bool check(const char *word)
 unsigned int hash(const char *word)
 {
     // TODO
-   int pos = word[0];
-   return pos;
+
+    // Source: DJBX33A (Daniel J. Bernstein, Times 33 with Addition)
+
+    unsigned int hash = 5381;
+    unsigned int i = 0;
+    unsigned int len = strlen(word);
+
+    for (; i < len; word++, i++)
+    {
+        hash = ((hash << 5) + hash) + (*word);
+    }
+
+    return hash % N;
 }
 
 // Loads dictionary into memory, returning true if successful, else false
@@ -79,8 +90,7 @@ bool load(const char *dictionary)
 
         //HASH FUNCTION
         int pos = hash(buffer);
-        // printf("Hash pos: %i\n", pos);
-        // printf("Word to add: %s\n", buffer);
+
         //INSERT TO HASH TABLE
         n = malloc(sizeof(node));
         if (n == NULL)
@@ -93,7 +103,6 @@ bool load(const char *dictionary)
         list = n;
         table[pos] = list;
         count++;
-        // printf("Count: %li\n", count);
 
     }
     fclose(inptr);
@@ -125,5 +134,5 @@ bool unload(void)
         }
         return true;
     }
-        return false;
+    return false;
 }
